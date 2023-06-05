@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:tkecomadmin/inner_screens/all_orders_screen.dart';
 import 'package:tkecomadmin/inner_screens/all_products_grid.dart';
 import 'package:tkecomadmin/screens/screens_shelf.dart';
 
@@ -51,8 +52,12 @@ class _MyAppState extends State<MyApp> {
             debugShowCheckedModeBanner: false,
             title: 'Grocery',
             theme: Styles.themeData(themeProvider.getDarkTheme, context),
-            routes: {AllProductsGrid.routeName: (context) => AllProductsGrid()},
-            home: const MainScreen(),
+            routes: {
+              AllOrdersScreen.routeName: (context) => const AllOrdersScreen(),
+              AllProductsGrid.routeName: (context) => const AllProductsGrid(),
+              MainScreen.routeName: (context) => const MainScreen(),
+            },
+            initialRoute: MainScreen.routeName,
           );
         },
       ),

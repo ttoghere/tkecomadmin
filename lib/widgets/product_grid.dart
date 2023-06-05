@@ -19,7 +19,7 @@ class ProductGrid extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GridView.builder(
-      physics: NeverScrollableScrollPhysics(),
+      physics: const NeverScrollableScrollPhysics(),
       shrinkWrap: true,
       itemCount: isInMain ? 4 : 20,
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
@@ -28,7 +28,7 @@ class ProductGrid extends StatelessWidget {
           crossAxisSpacing: defaultPadding,
           mainAxisSpacing: defaultPadding),
       itemBuilder: (context, index) {
-        return ProductWidget();
+        return const ProductWidget();
       },
     );
   }

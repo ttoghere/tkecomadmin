@@ -40,6 +40,7 @@ class _AllProductsGridState extends State<AllProductsGrid> {
                 child: Column(
                   children: [
                     Header(
+                      showTextfield: false,
                       fct: () {
                         context
                             .read<ListMenuController>()

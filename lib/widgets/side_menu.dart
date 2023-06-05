@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-
 import 'package:iconly/iconly.dart';
 import 'package:provider/provider.dart';
+import 'package:tkecomadmin/inner_screens/all_orders_screen.dart';
 import 'package:tkecomadmin/inner_screens/all_products_grid.dart';
 import 'package:tkecomadmin/providers/providers_shelf.dart';
 import 'package:tkecomadmin/services/utils.dart';
@@ -23,8 +23,6 @@ class _SideMenuState extends State<SideMenu> {
   Widget build(BuildContext context) {
     final theme = Utils(context).getTheme;
     final themeState = Provider.of<DarkThemeProvider>(context);
-
-    final color = Utils(context).color;
     return Drawer(
       child: ListView(
         children: [
@@ -54,7 +52,10 @@ class _SideMenuState extends State<SideMenu> {
           ),
           DrawerListTile(
             title: "View all order",
-            press: () {},
+            press: () {
+              Navigator.of(context)
+                  .pushReplacementNamed(AllOrdersScreen.routeName);
+            },
             icon: IconlyBold.bag_2,
           ),
           SwitchListTile(
