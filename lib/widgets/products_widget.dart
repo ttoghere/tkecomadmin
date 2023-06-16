@@ -1,13 +1,21 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first, unnecessary_null_comparison
 // ignore_for_file: library_private_types_in_public_api
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:tkecomadmin/inner_screens/edit_products.dart';
+
+import 'package:tkecomadmin/services/global_method.dart';
 
 import '../services/utils.dart';
 import 'text_widget.dart';
 
 class ProductWidget extends StatefulWidget {
+  final String id;
+
   const ProductWidget({
     Key? key,
+    required this.id,
   }) : super(key: key);
 
   @override
@@ -15,6 +23,49 @@ class ProductWidget extends StatefulWidget {
 }
 
 class _ProductWidgetState extends State<ProductWidget> {
+  String title = "";
+  String productCat = "";
+  String? imageUrl;
+  String price = '0.0';
+  double salePrice = 0.0;
+  bool isOnSale = false;
+  bool isPiece = false;
+  @override
+  void initState() {
+    super.initState();
+    getProductsData();
+  }
+
+  Future<void> getProductsData() async {
+    try {
+      final DocumentSnapshot productsDoc = await FirebaseFirestore.instance
+          .collection('products')
+          .doc(widget.id)
+          .get();
+      if (productsDoc == null) {
+        return;
+      } else {
+        setState(() {
+          title = productsDoc.get('title');
+          productCat = productsDoc.get('productCategoryName');
+          imageUrl = productsDoc.get('imageUrl');
+          price = productsDoc.get('price');
+          salePrice = productsDoc.get('salePrice');
+          isOnSale = productsDoc.get('isOnSale');
+          isPiece = productsDoc.get('isPiece');
+        });
+      }
+    } catch (error) {
+      GlobalMethods.warningDialog(
+          subtitle: '$error',
+          context: context,
+          title: "An error occured",
+          fct: () {
+            Navigator.of(context).pop();
+          });
+    } finally {}
+  }
+
   @override
   Widget build(BuildContext context) {
     Size size = Utils(context).getScreenSize;
@@ -27,7 +78,24 @@ class _ProductWidgetState extends State<ProductWidget> {
         color: Theme.of(context).cardColor.withOpacity(0.6),
         child: InkWell(
           borderRadius: BorderRadius.circular(12),
-          onTap: () {},
+          onTap: () {
+            Navigator.of(context).pushReplacement(
+              MaterialPageRoute(
+                builder: (context) => EditProductScreen(
+                  id: widget.id,
+                  title: title,
+                  price: price,
+                  salePrice: salePrice,
+                  productCat: productCat,
+                  imageUrl: imageUrl == null
+                      ? 'https://www.lifepng.com/wp-content/uploads/2020/11/Apricot-Large-Single-png-hd.png'
+                      : imageUrl!,
+                  isOnSale: isOnSale,
+                  isPiece: isPiece,
+                ),
+              ),
+            );
+          },
           child: Padding(
             padding: const EdgeInsets.all(8.0),
             child: Column(
@@ -41,10 +109,13 @@ class _ProductWidgetState extends State<ProductWidget> {
                     Flexible(
                       flex: 3,
                       child: Image.network(
-                        'https://www.lifepng.com/wp-content/uploads/2020/11/Apricot-Large-Single-png-hd.png',
-                        fit: BoxFit.fill,
+                        imageUrl == null
+                            ? 'https://scontent.fadb2-1.fna.fbcdn.net/v/t1.6435-9/97118022_963873147398208_5016586750223450112_n.jpg?_nc_cat=101&ccb=1-7&_nc_sid=09cbfe&_nc_ohc=x16ePQxHmUgAX_Lxxdr&_nc_ht=scontent.fadb2-1.fna&oh=00_AfDLg4iJ1gKodFaw6pfYru0ChFQ3DHxlphY7yrHMqhTRqg&oe=64B25578'
+                            : imageUrl!
                         // width: screenWidth * 0.12,
+                        ,
                         height: size.width * 0.12,
+                        fit: BoxFit.cover,
                       ),
                     ),
                     const Spacer(),
@@ -73,7 +144,9 @@ class _ProductWidgetState extends State<ProductWidget> {
                 Row(
                   children: [
                     TextWidget(
-                      text: '\$1.99',
+                      text: isOnSale
+                          ? '\$${salePrice.toStringAsFixed(2)}'
+                          : '\$$price',
                       color: color,
                       textSize: 18,
                     ),
@@ -83,14 +156,14 @@ class _ProductWidgetState extends State<ProductWidget> {
                     Visibility(
                         visible: true,
                         child: Text(
-                          '\$3.89',
+                          '\$$price',
                           style: TextStyle(
                               decoration: TextDecoration.lineThrough,
                               color: color),
                         )),
                     const Spacer(),
                     TextWidget(
-                      text: '1Kg',
+                      text: isPiece ? "1Piece" : '1Kg',
                       color: color,
                       textSize: 18,
                     ),
@@ -100,7 +173,7 @@ class _ProductWidgetState extends State<ProductWidget> {
                   height: 2,
                 ),
                 TextWidget(
-                  text: 'Title',
+                  text: title,
                   color: color,
                   textSize: 24,
                   isTitle: true,

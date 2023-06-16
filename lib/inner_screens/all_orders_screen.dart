@@ -15,6 +15,16 @@ class AllOrdersScreen extends StatefulWidget {
 
 class _AllOrdersScreenState extends State<AllOrdersScreen> {
   @override
+  void dispose() {
+    context
+        .read<ListMenuController>()
+        .getOrdersScaffoldKey
+        .currentState!
+        .dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       key: context.read<ListMenuController>().getOrdersScaffoldKey,
